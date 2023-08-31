@@ -7,6 +7,11 @@ const styles = {
     backgroundColor: '#ffffff',
     borderRadius: '8px',
     minHeight: '80px',
+
+    '&:hover': {
+      cursor: 'grab',
+      backgroundColor: '#e2e4e9',
+    },
   },
   cartTitle: {
     marginBottom: '8px',
@@ -28,13 +33,14 @@ const styles = {
   },
 }
 
-const Card = ({ todo, onDragStart, onOpenDeleteDialog }) => {
+const Card = ({ todo, onDragStart, onDragEnd, onOpenDeleteDialog }) => {
   return (
     <Box
       key={todo.id}
       sx={styles.cart}
       draggable
       onDragStart={(e) => onDragStart(e, todo)}
+      onDragEnd={onDragEnd}
     >
       <Typography sx={styles.cartTitle}>{todo.title}</Typography>
       {todo.status === 'IN_PROGRESS' && (

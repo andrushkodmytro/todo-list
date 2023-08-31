@@ -16,7 +16,7 @@ import avatar3Url from '../../assets/avatar-3.jpg'
 
 const styles = {
   todoListPage: {
-    padding: '80px 0',
+    padding: '100px 0',
     userSelect: 'none',
   },
   mainTitle: { marginBottom: '20px' },

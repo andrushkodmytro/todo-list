@@ -41,6 +41,13 @@ const Card = ({ todo, onDragStart, onDragEnd, onOpenDeleteDialog }) => {
       draggable
       onDragStart={(e) => onDragStart(e, todo)}
       onDragEnd={onDragEnd}
+      onDrag={(e) => {
+        let dragImage = document.getElementById('dragImage')
+        if (dragImage) {
+          dragImage.style.left = e.pageX - Number(dragImage.dataset.x) + 'px'
+          dragImage.style.top = e.pageY - Number(dragImage.dataset.y) + 'px'
+        }
+      }}
     >
       <Typography sx={styles.cartTitle}>{todo.title}</Typography>
       {todo.status === 'IN_PROGRESS' && (

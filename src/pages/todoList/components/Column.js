@@ -24,7 +24,7 @@ const styles = {
     fontWeight: '500',
   },
   columnList: (first) => ({
-    padding: '2px',
+    padding: '4px',
     gap: '10px',
     display: 'flex',
     flexDirection: 'column',
@@ -38,13 +38,41 @@ const Column = ({ value, title, todos }) => {
   const data = useSelector((state) => state.todoList)
   const [isFocused, setIsFocused] = useState(false)
 
+  const removeDraggedImg = () => {
+    var hideDragImage = document.getElementById('hiddenDragImage')
+    var dragImage = document.getElementById('dragImage')
+
+    hideDragImage.remove()
+    dragImage.remove()
+  }
+
   const onDragStart = (e, todo) => {
-    e.target.style.opacity = '0.3'
     dispatch(setDraggedTask(todo))
+    // mouse coordinate
+    var rect = e.target.getBoundingClientRect()
+    var x = e.clientX - rect.left
+    var y = e.clientY - rect.top
+
+    // create clone
+    var hideDragImage = e.target.cloneNode(true)
+    hideDragImage.id = 'hiddenDragImage'
+
+    var dragImage = e.target.cloneNode(true)
+    dragImage.id = 'dragImage'
+    dragImage.style.position = 'absolute'
+    dragImage.dataset.x = x
+    dragImage.dataset.y = y
+    dragImage.style.width = e.target.offsetWidth - 32 + 'px'
+    dragImage.style.pointerEvents = 'none'
+
+    hideDragImage.style.opacity = 0
+    document.body.appendChild(hideDragImage)
+    document.body.appendChild(dragImage)
+    e.dataTransfer.setDragImage(hideDragImage, 0, 0)
   }
 
   const onDragEnd = (e) => {
-    e.target.style.opacity = '1'
+    removeDraggedImg()
   }
 
   const onDragOver = (event) => {
@@ -63,6 +91,7 @@ const Column = ({ value, title, todos }) => {
         toStatus: STATUSES[colName].keyName,
       }),
     )
+    removeDraggedImg()
   }
 
   const onOpenDeleteDialog = (task) => {

@@ -33,7 +33,7 @@ const styles = {
   },
 }
 
-const Card = ({ todo, onDragStart, onDragEnd, onOpenDeleteDialog }) => {
+const Card = ({ todo, onDragStart, onDragEnd, onOpenDeleteDialog, onDrop }) => {
   return (
     <Box
       key={todo.id}
@@ -48,6 +48,8 @@ const Card = ({ todo, onDragStart, onDragEnd, onOpenDeleteDialog }) => {
           dragImage.style.top = e.pageY - Number(dragImage.dataset.y) + 'px'
         }
       }}
+      data-id={todo.id}
+      onDrop={onDrop}
     >
       <Typography sx={styles.cartTitle}>{todo.title}</Typography>
       {todo.status === 'IN_PROGRESS' && (

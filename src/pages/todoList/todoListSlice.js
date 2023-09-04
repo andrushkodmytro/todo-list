@@ -31,10 +31,23 @@ export const todoListSlice = createSlice({
       state.done = payload.done
     },
     dropTask: (state, { payload }) => {
-      state[payload.toStatus].push(payload.task)
+      // remove from old place
       state[payload.fromStatus] = state[payload.fromStatus].filter(
         (task) => task.id !== payload.task.id,
       )
+
+      // drop on other task
+      if (payload.droppedId > -1) {
+        if (payload.draggedId > payload.droppedId) {
+          state[payload.toStatus].splice(payload.droppedId, 0, payload.task)
+        } else {
+          state[payload.toStatus].splice(payload.droppedId, 0, payload.task)
+        }
+      } else {
+        // drop on container and add it in the end
+        state[payload.toStatus].push(payload.task)
+      }
+
       state.draggedTask = {}
     },
     closeDeleteDialog: (state) => {

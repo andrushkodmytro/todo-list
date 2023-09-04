@@ -42,8 +42,10 @@ const Column = ({ value, title, todos }) => {
     var hideDragImage = document.getElementById('hiddenDragImage')
     var dragImage = document.getElementById('dragImage')
 
-    hideDragImage.remove()
-    dragImage.remove()
+    if (hideDragImage && dragImage) {
+      hideDragImage.remove()
+      dragImage.remove()
+    }
   }
 
   const onDragStart = (e, todo) => {
@@ -79,18 +81,37 @@ const Column = ({ value, title, todos }) => {
     event.preventDefault()
   }
 
-  const onDrop = (event, colName) => {
+  const onDrop = (e) => {
+    e.stopPropagation()
+
     setIsFocused(false)
 
-    if (STATUSES[colName].value === STATUSES.TODO.value) return
+    const draggedId = data[STATUSES[data.draggedTask.status].keyName].findIndex(
+      (item) => item.id === data.draggedTask.id,
+    )
+
+    const droppedElem = e.target.getAttribute('draggable')
+      ? e.target
+      : e.target.closest('[draggable="true"]')
+
+    const droppedId = droppedElem
+      ? data[STATUSES[value].keyName].findIndex(
+          (item) => item.id === Number(droppedElem.dataset.id),
+        )
+      : -1
 
     dispatch(
       dropTask({
-        task: { ...data.draggedTask, status: STATUSES[colName].value },
+        task: { ...data.draggedTask, status: STATUSES[value].value },
         fromStatus: STATUSES[data.draggedTask.status].keyName,
-        toStatus: STATUSES[colName].keyName,
+        toStatus: STATUSES[value].keyName,
+        draggedId,
+        droppedId,
       }),
     )
+
+    // if (STATUSES[colName].value === STATUSES.TODO.value) return
+
     removeDraggedImg()
   }
 
@@ -110,7 +131,7 @@ const Column = ({ value, title, todos }) => {
 
       <Box
         sx={styles.columnList(isFocused)}
-        onDrop={(e) => onDrop(e, value)}
+        onDrop={onDrop}
         onDragOver={(e) => onDragOver(e)}
         onDragEnter={(e) => {
           if (e.currentTarget.contains(e.relatedTarget)) {
@@ -134,6 +155,7 @@ const Column = ({ value, title, todos }) => {
               onDragStart={onDragStart}
               onDragEnd={onDragEnd}
               onOpenDeleteDialog={onOpenDeleteDialog}
+              onDrop={onDrop}
             />
           )
         })}
